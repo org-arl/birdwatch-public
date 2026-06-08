@@ -1,0 +1,198 @@
+let audioCtx: AudioContext | null = null;
+const getAudioContext = () => {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    return audioCtx;
+};
+
+export interface AudioPlayOptions {
+    startTimeMs: number;
+    durationMs: number;
+    minFreq?: number;
+    maxFreq?: number;
+    playbackSpeed?: number;
+    onFinish?: () => void;
+}
+
+/**
+ * Parses `_t<milliseconds>` from spectrogram filenames (e.g. ..._t5000.png → 5000).
+ */
+export const extractStartTimeFromFilename = (filename: string): number => {
+    const match = filename.match(/_t(\d+)(?:\.\w+)?$/);
+    if (match && match[1]) {
+        return parseInt(match[1], 10);
+    }
+    return 0;
+};
+
+const AUDIO_EXT_PRIORITY = ['wav', 'ogg', 'mp3', 'm4a'] as const;
+
+/** Map an image filename to a matching audio file in the loaded set (prefers .wav). */
+export const getAudioFilename = (
+    imageName: string,
+    audioFiles: { [name: string]: unknown },
+): string | null => {
+    const parts = imageName.split(/_(ch\d+|w\d+|t\d+)/);
+    const base = parts[0] || imageName.replace(/\.[^.]+$/, '');
+    for (const ext of AUDIO_EXT_PRIORITY) {
+        const candidate = `${base}.${ext}`;
+        if (audioFiles[candidate]) return candidate;
+    }
+    return null;
+};
+
+export class AudioPlayer {
+    private context: AudioContext;
+    private audioElement: HTMLAudioElement | null = null;
+    private audioSource: MediaElementAudioSourceNode | null = null;
+    private currentFilename: string | null = null;
+    private currentObjectUrl: string | null = null;
+    private stopTimeout: any = null;
+    private playbackEndTime: number | null = null;
+    private currentOnFinish: (() => void) | null = null;
+
+    constructor() {
+        this.context = getAudioContext();
+    }
+
+    async loadAudioFile(file: File | FileSystemFileHandle): Promise<void> {
+        const f = file instanceof File ? file : await (file as FileSystemFileHandle).getFile();
+        if (this.currentFilename === f.name && this.audioElement) return;
+
+        this.currentFilename = f.name;
+
+        if (this.currentObjectUrl) {
+            URL.revokeObjectURL(this.currentObjectUrl);
+        }
+
+        if (this.audioSource) {
+            this.audioSource.disconnect();
+            this.audioSource = null;
+        }
+
+        this.currentObjectUrl = URL.createObjectURL(f);
+        this.audioElement = new Audio();
+        this.audioElement.src = this.currentObjectUrl;
+
+        this.audioSource = this.context.createMediaElementSource(this.audioElement);
+    }
+
+    stop() {
+        if (this.audioElement) {
+            this.audioElement.pause();
+        }
+        if (this.stopTimeout) {
+            clearTimeout(this.stopTimeout);
+            this.stopTimeout = null;
+        }
+        this.playbackEndTime = null;
+        this.currentOnFinish = null;
+        if (this.audioSource) {
+            try { this.audioSource.disconnect(); } catch (e) { }
+        }
+    }
+
+    togglePause() {
+        if (!this.audioElement) return;
+        if (this.audioElement.paused) {
+            this.audioElement.play().catch(e => console.error("Resume failed", e));
+            if (this.playbackEndTime !== null) {
+                const remainingMs = (this.playbackEndTime - this.audioElement.currentTime) * 1000 / this.audioElement.playbackRate;
+                if (remainingMs > 0) {
+                    this.stopTimeout = setTimeout(() => {
+                        this.audioElement?.pause();
+                        if (this.currentOnFinish) this.currentOnFinish();
+                    }, remainingMs);
+                } else {
+                    this.audioElement.pause();
+                    if (this.currentOnFinish) this.currentOnFinish();
+                }
+            }
+        } else {
+            this.audioElement.pause();
+            if (this.stopTimeout) {
+                clearTimeout(this.stopTimeout);
+                this.stopTimeout = null;
+            }
+        }
+    }
+
+    isPaused(): boolean {
+        if (!this.audioElement) return true;
+        return this.audioElement.paused;
+    }
+
+    async playSubRegion(options: AudioPlayOptions) {
+        if (!this.audioElement || !this.audioSource) return;
+
+        if (this.context.state === 'suspended') {
+            await this.context.resume();
+        }
+
+        this.stop();
+
+        const minFreq = options.minFreq ?? 500;
+        const maxFreq = options.maxFreq ?? 12000;
+
+        // 12th-order Butterworth bandpass (Q values low→high to limit clipping)
+        const BUTTERWORTH_Q_12TH_ORDER = [0.5043, 0.5412, 0.6302, 0.8213, 1.3065, 3.8306];
+        const highpasses: BiquadFilterNode[] = [];
+        const lowpasses: BiquadFilterNode[] = [];
+
+        for (const q of BUTTERWORTH_Q_12TH_ORDER) {
+            const hp = this.context.createBiquadFilter();
+            hp.type = 'highpass';
+            hp.frequency.value = minFreq;
+            hp.Q.value = q;
+            highpasses.push(hp);
+
+            const lp = this.context.createBiquadFilter();
+            lp.type = 'lowpass';
+            lp.frequency.value = maxFreq;
+            lp.Q.value = q;
+            lowpasses.push(lp);
+        }
+
+        for (let i = 0; i < highpasses.length - 1; i++) {
+            highpasses[i].connect(highpasses[i + 1]);
+        }
+        highpasses[highpasses.length - 1].connect(lowpasses[0]);
+        for (let i = 0; i < lowpasses.length - 1; i++) {
+            lowpasses[i].connect(lowpasses[i + 1]);
+        }
+        lowpasses[lowpasses.length - 1].connect(this.context.destination);
+
+        const channel1 = this.currentFilename?.includes('ch1');
+        const channel2 = this.currentFilename?.includes('ch2');
+
+        if (channel1 || channel2) {
+            const splitter = this.context.createChannelSplitter(2);
+            this.audioSource.connect(splitter);
+            const channel = channel1 ? 0 : 1;
+            splitter.connect(highpasses[0], channel);
+        } else {
+            this.audioSource.connect(highpasses[0]);
+        }
+
+        const offsetSeconds = options.startTimeMs / 1000;
+        const durationSeconds = options.durationMs / 1000;
+        const playbackSpeed = options.playbackSpeed ?? 1.0;
+
+        this.audioElement.currentTime = offsetSeconds;
+        this.audioElement.playbackRate = playbackSpeed;
+        this.playbackEndTime = offsetSeconds + durationSeconds;
+        this.currentOnFinish = options.onFinish || null;
+
+        try {
+            await this.audioElement.play();
+            this.stopTimeout = setTimeout(() => {
+                this.audioElement?.pause();
+                if (this.currentOnFinish) this.currentOnFinish();
+            }, (durationSeconds / playbackSpeed) * 1000);
+        } catch (e) {
+            console.error("Audio playback failed", e);
+            if (this.currentOnFinish) this.currentOnFinish();
+        }
+    }
+}

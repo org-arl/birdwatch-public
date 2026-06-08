@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BirdWatch - Acoustic Analysis Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: '#0f172a',
+              surface: '#1e293b',
+              primary: '#3b82f6',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+        border: 2px solid #0f172a;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+      /* Firefox scrollbar styling */
+      .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #334155 transparent;
+      }
+    </style>
+    <script type="module" src="/index.tsx"></script>
+</head>
+  <body class="bg-background text-slate-200 antialiased overflow-hidden">
+    <div id="root"></div>
+  </body>
+</html>
