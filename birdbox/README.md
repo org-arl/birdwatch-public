@@ -1,6 +1,6 @@
 # BirdBox
 
-Paper: [Time-frequency localization of bird calls in dense soundscapes](TODO_ARXIV_LINK)
+Paper: [Time-frequency localization of bird calls in dense soundscapes](https://arxiv.org/abs/2606.10407)
 
 BirdBox is a framework for time–frequency localization of bird vocalizations in spectrograms using custom-trained [YOLO11](https://docs.ultralytics.com/) architectures.
 
@@ -84,7 +84,7 @@ Two detectors pre-trained on soundscapes from Singapore are included in the `mod
   </tbody>
 </table>
 
-Detections are matched to ground-truth boxes using IoMin@0.5 (see the [paper](TODO_ARXIV_LINK) for details). The reported precision, recall and F1-score values are obtained at the confidence threshold where the F1-score peaks.
+Detections are matched to ground-truth boxes using IoMin@0.5 (see the [paper](https://arxiv.org/abs/2606.10407) for details). The reported precision, recall and F1-score values are obtained at the confidence threshold where the F1-score peaks.
 
 Use either model to detect bird calls in new recordings:
 
@@ -131,7 +131,7 @@ There are two practical ways to obtain bounding box labels in YOLO format:
 2. **Annotate your own recordings.** [BirdWatch](../birdwatch/) is a lightweight,
    open-source browser-based annotation tool built exactly for this.
 
-   1. Open [BirdWatch](https://simhex.github.io/birdwatch/).
+   1. Open [BirdWatch](https://org-arl.github.io/birdwatch-public/).
    2. Point it at local directories containing spectrogram images and audio files.
    3. Draw bounding boxes on the spectrograms and save the labels directly in YOLO
       format.

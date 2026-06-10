@@ -23,7 +23,7 @@ Although developed for bioacoustic applications and YOLO-based detectors, it can
 
 ## Getting Started
 
-Open the app: **[BirdWatch →](https://simhex.github.io/birdwatch/)**
+Open the app: **[BirdWatch →](https://org-arl.github.io/birdwatch-public/)**
 
 ### Load data
 

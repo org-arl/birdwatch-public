@@ -1,6 +1,6 @@
 # BirdWatch
 
-This repository accompanies the paper [Time-frequency localization of bird calls in dense soundscapes](TODO_ARXIV_LINK) and contains two components:
+This repository accompanies the paper [Time-frequency localization of bird calls in dense soundscapes](https://arxiv.org/abs/2606.10407) and contains two components:
 
 | | |
 |---|---|
@@ -19,19 +19,21 @@ See [`birdbox/README.md`](birdbox/README.md) for setup and usage.
 
 BirdWatch is a browser-based annotation and analysis tool for spectrograms that supports bounding-box labeling, playback of selected time–frequency regions, and evaluation of model predictions, with all processing performed locally in the browser.
 
-See [`birdwatch/README.md`](birdwatch/README.md) for usage, or open the app directly: **[BirdWatch →](https://simhex.github.io/birdwatch/)**
+See [`birdwatch/README.md`](birdwatch/README.md) for usage, or open the app directly: **[BirdWatch →](https://org-arl.github.io/birdwatch-public/)**
 
 ---
 
 ## Citation
 
 ```bibtex
-@misc{hexeberg2026,
-  title  = {Time-frequency localization of bird calls in dense soundscapes},
-  author = {Hexeberg, Simen and Tong, Fanghui and Vishnu, Hari and Chitre, Mandar},
-  year   = {2026},
-  eprint = {TODO_ARXIV_ID},
-  archivePrefix = {arXiv},
+@misc{hexeberg2026timefrequencylocalizationbirdcalls,
+      title={Time-frequency localization of bird calls in dense soundscapes}, 
+      author={Simen Hexeberg and Fanghui Tong and Hari Vishnu and Mandar Chitre},
+      year={2026},
+      eprint={2606.10407},
+      archivePrefix={arXiv},
+      primaryClass={cs.SD},
+      url={https://arxiv.org/abs/2606.10407}, 
 }
 ```
 
