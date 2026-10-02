@@ -4,14 +4,14 @@ This repository accompanies the paper [Time-frequency localization of bird calls
 
 | | |
 |---|---|
-| [`birdbox/`](birdbox/) | Julia toolkit to train and run YOLO-based bird call detectors on raw audio |
+| [`birdbox/`](birdbox/) | Julia toolkit to train and run YOLO and RF-DETR bird call detectors on raw audio |
 | [`birdwatch/`](birdwatch/) | Tool to annotate and analyze spectrograms in the browser |
 
 ---
 
 ## BirdBox
 
-BirdBox localizes bird vocalizations in time and frequency from raw audio using custom-trained [YOLO11](https://docs.ultralytics.com/) models. It includes two detectors pre-trained on complex soundscapes from Singapore, along with tools to apply them to new recordings and train custom detectors.
+BirdBox localizes bird vocalizations in time and frequency from raw audio using custom-trained [YOLO11](https://docs.ultralytics.com/) and [RF-DETR](https://github.com/roboflow/rf-detr) models. It includes detectors pre-trained on complex soundscapes from Singapore, along with tools to apply them to new recordings and train custom detectors.
 
 See [`birdbox/README.md`](birdbox/README.md) for setup and usage.
 

@@ -1,7 +1,8 @@
 """
     BirdBox
 
-Time-frequency localization of bird vocalizations in spectrograms using YOLO.
+Time-frequency localization of bird vocalizations in spectrograms using YOLO
+or RF-DETR.
 
 # Audio
 
@@ -16,8 +17,8 @@ Time-frequency localization of bird vocalizations in spectrograms using YOLO.
 
 # Detection
 
-* `detect(model_path; ...)` — run YOLO on spectrogram image in `imgdir`.
-* `detect(recording, model_path; ...)` — split recording into clips, generate spectrogram images, then run YOLO model.
+* `detect(model_path; backend=:yolo, ...)` — run a detector on spectrogram images in `imgdir`.
+* `detect(recording, model_path; backend=:yolo, ...)` — split a recording into clips, generate spectrogram images, then run the detector.
 
 # Labels
 
@@ -27,8 +28,9 @@ Time-frequency localization of bird vocalizations in spectrograms using YOLO.
 # Training data prep / training
 
 * `write_split_file(split, files; outdir)` — write a `<split>.txt` list of spectrogram image paths.
-* `write_data_yaml(path; ...)` — write a YOLO `data.yaml`.
-* `train(model_path, data_yaml; ...)` — train/fine-tune YOLO via Ultralytics.
+* `write_data_yaml(; ...)` — write a YOLO `data.yaml`.
+* `write_padded_dataset(outdir; train, val, ...)` — pad spectrograms and rewrite labels for RF-DETR.
+* `train(model, data; backend=:yolo, ...)` — train/fine-tune YOLO or RF-DETR.
 """
 module BirdBox
 
@@ -36,7 +38,7 @@ export load_audio, split_recording
 export spectrogram, spec2img, write_spectrogram_images
 export detect
 export read_yolo_labels, add_timefreq_columns
-export write_split_file, write_data_yaml, train
+export write_split_file, write_data_yaml, write_padded_dataset, train
 export FMIN, FMAX, DURATION, OVERLAP, PRED_DIR, TRAIN_DIR, IMGSIZE, NMS_IOU, MINCONF
 
 include("config.jl")

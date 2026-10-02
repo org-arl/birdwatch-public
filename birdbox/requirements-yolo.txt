@@ -1,0 +1,6 @@
+# Python dependencies for YOLO training and inference (BirdBox.detect via PyCall).
+# Installed into the birdbox-yolo conda env by setup.jl.
+
+ultralytics
+torch
+PyYAML

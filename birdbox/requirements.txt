@@ -1,5 +1,0 @@
-# Python dependencies for YOLO training (scripts/train.py) and inference (BirdBox.detect via PyCall).
-
-ultralytics
-torch
-PyYAML

@@ -1,0 +1,5 @@
+# Python dependencies for RF-DETR training and inference.
+# Installed into the birdbox-rfdetr conda env by setup.jl.
+# Separate from birdbox-yolo: RF-DETR and YOLO need different PyTorch builds.
+
+rfdetr[train]
