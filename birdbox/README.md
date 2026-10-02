@@ -42,13 +42,13 @@ Four detectors pre-trained on soundscapes from Singapore are provided. `setup.jl
 | Model                        | Parameters | Test set                    | mAP@50 | F1    | Precision | Recall | Best conf. threshold |
 | ---------------------------- | ---------- | --------------------------- | ------ | ----- | --------- | ------ | -------------------- |
 | `yolo11n`                    | 2.6M       | Singapore (in-distribution) | 0.874  | 0.817 | 0.852     | 0.785  | 0.234                |
-| Hawaii (out-of-distribution) | 0.558      | 0.577                       | 0.568  | 0.586 | 0.177     |        |                      |
+||| Hawaii (out-of-distribution) | 0.558      | 0.577                       | 0.568  | 0.586 | 0.177     |        |                      |
 | `yolo11l`                    | 25.3M      | Singapore (in-distribution) | 0.871  | 0.819 | 0.816     | 0.822  | 0.179                |
-| Hawaii (out-of-distribution) | 0.574      | 0.601                       | 0.582  | 0.622 | 0.171     |        |                      |
+||| Hawaii (out-of-distribution) | 0.574      | 0.601                       | 0.582  | 0.622 | 0.171     |        |                      |
 | `rfdetr-nano`                | 30.5M      | Singapore (in-distribution) | 0.896  | 0.831 | 0.848     | 0.813  | 0.330                |
-| Hawaii (out-of-distribution) | 0.618      | 0.631                       | 0.611  | 0.653 | 0.296     |        |                      |
+||| Hawaii (out-of-distribution) | 0.618      | 0.631                       | 0.611  | 0.653 | 0.296     |        |                      |
 | `rfdetr-large`               | 33.9M      | Singapore (in-distribution) | 0.903  | 0.836 | 0.819     | 0.853  | 0.293                |
-| Hawaii (out-of-distribution) | 0.638      | 0.646                       | 0.619  | 0.675 | 0.310     |        |                      |
+||| Hawaii (out-of-distribution) | 0.638      | 0.646                       | 0.619  | 0.675 | 0.310     |        |                      |
 
 
 Detections are matched to ground-truth boxes using [IoMin@0.5](mailto:IoMin@0.5) (see the [paper](https://arxiv.org/abs/2606.10407) for details). The reported precision, recall and F1-score values are obtained at the confidence threshold where the F1-score peaks.
